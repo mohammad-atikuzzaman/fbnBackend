@@ -1,7 +1,7 @@
 const express = require("express");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const app = express();
-var cors = require("cors");
+const cors = require("cors");
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
@@ -12,7 +12,8 @@ app.use(
   })
 );
 
-const uri = "mongodb+srv://FBNPabna:FBNPabna@cluster0.cdjmo.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const uri =
+  "mongodb+srv://FBNPabna:FBNPabna@cluster0.cdjmo.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -20,7 +21,7 @@ const client = new MongoClient(uri, {
     version: ServerApiVersion.v1,
     strict: true,
     deprecationErrors: true,
-  }
+  },
 });
 
 async function run() {
@@ -29,18 +30,27 @@ async function run() {
     await client.connect();
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+    console.log(
+      "Pinged your deployment. You successfully connected to MongoDB!"
+    );
 
-   const db = client.db("FBN")
-   const users = db.collection("users")
+    const db = client.db("FBN");
+    const users = db.collection("users");
 
-   app.post("/save-user", async(req, res)=>{
-    const user = await req.body
-    console.log(user)
-    const result = await users.insertOne(user)
-    res.send(result)
-   })
+    app.post("/save-user", async (req, res) => {
+      const user = await req.body;
+      console.log(user);
+      const result = await users.insertOne(user);
+      res.send(result);
+    });
 
+    app.get("/user-info/:email", async (req, res) => {
+      const { email } = await req.params;
+      const query = { userEmail: email };
+      const result = await users.findOne(query);
+      
+      res.send(result);
+    });
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
@@ -51,7 +61,7 @@ run().catch(console.dir);
 // ____________________________________________________________________
 
 app.get("/", (req, res) => {
-  res.send("Hello World! form itemsVally");
+  res.send("Hello World! form FBN ( faridpur blood network) server");
 });
 
 app.listen(port, () => {
