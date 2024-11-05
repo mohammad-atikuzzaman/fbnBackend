@@ -5,9 +5,7 @@ const cors = require("cors");
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
-app.use(
-  cors()
-);
+app.use(cors());
 
 const uri =
   "mongodb+srv://FBNPabna:FBNPabna@cluster0.cdjmo.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
@@ -40,10 +38,15 @@ async function run() {
       res.send(result);
     });
 
-    app.get("/donner's", async(req, res)=>{
-      const result = await users.find().toArray()
-      res.send(result)
-    })
+    app.get("/akash", async (req, res) => {
+      const result = "hello ami akash";
+      res.send(result);
+    });
+
+    app.get("/donner's", async (req, res) => {
+      const result = await users.find().toArray();
+      res.send(result);
+    });
 
     app.get("/user-info/:email", async (req, res) => {
       const { email } = req.params;
@@ -51,6 +54,24 @@ async function run() {
 
       const result = await users.findOne(query);
       res.send(result);
+    });
+
+    app.get("/donner-details/:id", async (req, res) => {
+      const { id } = req.params;
+      const query = { _id: new ObjectId(id) };
+
+      const result = await users.findOne(query);
+
+      const data = await {
+        name: result?.userName,
+        email: result?.userEmail,
+        phone: result?.phone,
+        blood: result?.bloodGroup,
+        photo: result?.photoUrl,
+        village: result?.village,
+        lastDonation: result?.lastDonationDate
+      };
+      res.send(data);
     });
   } finally {
     // Ensures that the client will close when you finish/error
