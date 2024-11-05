@@ -6,10 +6,7 @@ const port = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(
-  cors({
-    origin: ["http://localhost:5173", "*"],
-    credentials: true,
-  })
+  cors()
 );
 
 const uri =
@@ -39,16 +36,20 @@ async function run() {
 
     app.post("/save-user", async (req, res) => {
       const user = await req.body;
-      console.log(user);
       const result = await users.insertOne(user);
       res.send(result);
     });
 
+    app.get("/donner's", async(req, res)=>{
+      const result = await users.find().toArray()
+      res.send(result)
+    })
+
     app.get("/user-info/:email", async (req, res) => {
-      const { email } = await req.params;
+      const { email } = req.params;
       const query = { userEmail: email };
+
       const result = await users.findOne(query);
-      
       res.send(result);
     });
   } finally {
