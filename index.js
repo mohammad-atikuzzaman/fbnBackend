@@ -9,7 +9,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://gleaming-semifreddo-e7dd67.netlify.app/",
+      "https://gleaming-semifreddo-e7dd67.netlify.app",
       "*",
     ],
     credentials: true,
