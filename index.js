@@ -5,7 +5,16 @@ const cors = require("cors");
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://gleaming-semifreddo-e7dd67.netlify.app/",
+      "*",
+    ],
+    credentials: true,
+  })
+);
 
 const uri =
   "mongodb+srv://FBNPabna:FBNPabna@cluster0.cdjmo.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
@@ -65,7 +74,7 @@ async function run() {
     });
     app.get("/villages", async (req, res) => {
       const result = await users.find().toArray();
-      const villages = [...new Set(result.map(item=> item.village))]
+      const villages = [...new Set(result.map((item) => item.village))];
       res.send(villages);
     });
 
