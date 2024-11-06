@@ -63,6 +63,11 @@ async function run() {
       const result = await users.find().toArray();
       res.send(result);
     });
+    app.get("/villages", async (req, res) => {
+      const result = await users.find().toArray();
+      const villages = [...new Set(result.map(item=> item.village))]
+      res.send(villages);
+    });
 
     app.get("/user-info/:email", async (req, res) => {
       const { email } = req.params;
