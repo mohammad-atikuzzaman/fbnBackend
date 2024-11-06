@@ -33,13 +33,29 @@ async function run() {
     const users = db.collection("users");
 
     app.post("/save-user", async (req, res) => {
-      const user = await req.body;
-      const result = await users.insertOne(user);
-      res.send(result);
-    });
+      const {
+        userName,
+        userEmail,
+        password,
+        phone,
+        village,
+        bloodGroup,
+        lastDonationDate,
+        photoUrl,
+      } = await req.body;
 
-    app.get("/akash", async (req, res) => {
-      const result = "hello ami akash";
+      const data = {
+        userName,
+        userEmail,
+        password,
+        phone,
+        village,
+        bloodGroup,
+        lastDonationDate,
+        photoUrl,
+        role: "donner",
+      };
+      const result = await users.insertOne(data);
       res.send(result);
     });
 
@@ -56,6 +72,14 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/admin/:email", async (req, res) => {
+      const { email } = req.params;
+      const query = { userEmail: email };
+
+      const result = await users.findOne(query);
+      res.send(result?.role);
+    });
+
     app.get("/donner-details/:id", async (req, res) => {
       const { id } = req.params;
       const query = { _id: new ObjectId(id) };
@@ -69,7 +93,7 @@ async function run() {
         blood: result?.bloodGroup,
         photo: result?.photoUrl,
         village: result?.village,
-        lastDonation: result?.lastDonationDate
+        lastDonation: result?.lastDonationDate,
       };
       res.send(data);
     });
