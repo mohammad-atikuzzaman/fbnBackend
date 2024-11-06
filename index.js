@@ -83,7 +83,6 @@ async function run() {
     app.get("/donner-details/:id", async (req, res) => {
       const { id } = req.params;
       const query = { _id: new ObjectId(id) };
-
       const result = await users.findOne(query);
 
       const data = await {
