@@ -64,10 +64,20 @@ async function run() {
       res.send(result);
     });
 
-    app.get("/donner's", async (req, res) => {
-      const result = await users.find().toArray();
+    app.get("/donner", async (req, res) => {
+      const { village, bloodGroup, userName } = req.query;
+
+      const filter = {};
+      if (village) filter.village = village;
+      if (bloodGroup) filter.bloodGroup = bloodGroup;
+      if (userName) {
+        filter.userName = { $regex: userName, $options: "i" };
+      }
+
+      const result = await users.find(filter).toArray();
       res.send(result);
     });
+
     app.get("/villages", async (req, res) => {
       const result = await users.find().toArray();
       const villages = [...new Set(result.map((item) => item.village))];
