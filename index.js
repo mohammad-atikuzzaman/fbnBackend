@@ -1,17 +1,13 @@
 const express = require("express");
+const cors = require("cors");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const app = express();
-const cors = require("cors");
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "https://gleaming-semifreddo-e7dd67.netlify.app",
-      "*",
-    ],
+    origin: "*",
     credentials: true,
   })
 );
