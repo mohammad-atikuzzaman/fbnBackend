@@ -36,6 +36,7 @@ async function run() {
 
     const db = client.db("FBN");
     const users = db.collection("users");
+    const bloodRequest = db.collection("bloodRequest");
 
     app.post("/save-user", async (req, res) => {
       const {
@@ -116,6 +117,19 @@ async function run() {
       };
       res.send(data);
     });
+
+    app.post("/blood-request", async (req, res) => {
+      const data = req.body;
+      console.log(data);
+
+      const result = await bloodRequest.insertOne(data);
+      res.send(result);
+    });
+
+    app.get("/request", async(req, res)=>{
+      const result = await bloodRequest.find().toArray()
+      res.send(result)
+    })
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
