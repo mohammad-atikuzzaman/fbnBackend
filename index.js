@@ -135,7 +135,7 @@ async function run() {
 
     app.post("/successful-donation", async (req, res) => {
       const data = req.body;
-      console.log(data);
+      // console.log(data);
 
       const result = await successfully.insertOne(data);
       res.send(result);
@@ -143,7 +143,7 @@ async function run() {
 
     app.delete("/delete-donation/:id", async (req, res) => {
       const { id } = req.params;
-      console.log(id);
+      // console.log(id);
       const query = {_id: new ObjectId(id)}
       const result = await bloodRequest.deleteOne(query)
       res.send(result)
