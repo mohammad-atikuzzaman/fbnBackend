@@ -135,19 +135,21 @@ async function run() {
 
     app.post("/successful-donation", async (req, res) => {
       const data = req.body;
-      // console.log(data);
-
       const result = await successfully.insertOne(data);
       res.send(result);
     });
 
     app.delete("/delete-donation/:id", async (req, res) => {
       const { id } = req.params;
-      // console.log(id);
       const query = {_id: new ObjectId(id)}
       const result = await bloodRequest.deleteOne(query)
       res.send(result)
     });
+
+    app.get("/donated", async(req, res)=>{
+      const result = await successfully.find().toArray()
+      res.send(result)
+    })
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
