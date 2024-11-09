@@ -38,7 +38,6 @@ async function run() {
     const users = db.collection("users");
     const bloodRequest = db.collection("bloodRequest");
     const successfully = db.collection("successfully");
-    const canceled = db.collection("canceled");
 
     app.post("/save-user", async (req, res) => {
       const {
@@ -190,6 +189,31 @@ async function run() {
       const result = await successfully.findOne(query);
       res.send(result);
     });
+
+    app.get("/count-documents", async (req, res) => {
+      try {
+        // Count documents in each collection
+        const [usersCount, bloodRequestCount, successfullyCount] = await Promise.all([
+          users.countDocuments(),
+          bloodRequest.countDocuments(),
+          successfully.countDocuments(),
+        ]);
+    
+        res.status(200).json({
+          data: {
+            users: usersCount,
+            bloodRequest: bloodRequestCount,
+            successfully: successfullyCount,
+          },
+        });
+      } catch (error) {
+        res.status(500).json({
+          message: "Error fetching document counts",
+          error: error.message,
+        });
+      }
+    });
+    
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
