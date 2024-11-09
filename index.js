@@ -68,7 +68,7 @@ async function run() {
         $or: [{ phone }, { userEmail }],
       });
       if (user) {
-        return res.status(202).send({message:"User already exists"})
+        return res.status(202).send({ message: "User already exists" });
       }
 
       const result = await users.insertOne(data);
@@ -193,18 +193,17 @@ async function run() {
     app.get("/count-documents", async (req, res) => {
       try {
         // Count documents in each collection
-        const [usersCount, bloodRequestCount, successfullyCount] = await Promise.all([
-          users.countDocuments(),
-          bloodRequest.countDocuments(),
-          successfully.countDocuments(),
-        ]);
-    
+        const [usersCount, bloodRequestCount, successfullyCount] =
+          await Promise.all([
+            users.countDocuments(),
+            bloodRequest.countDocuments(),
+            successfully.countDocuments(),
+          ]);
+
         res.status(200).json({
-          data: {
-            users: usersCount,
-            bloodRequest: bloodRequestCount,
-            successfully: successfullyCount,
-          },
+          donors: usersCount,
+          bloodRequest: bloodRequestCount,
+          successfully: successfullyCount,
         });
       } catch (error) {
         res.status(500).json({
@@ -213,7 +212,20 @@ async function run() {
         });
       }
     });
-    
+
+    app.patch("/update-role", async (req, res) => {
+      const { role, id } = req.body;
+      const filter = { _id: new ObjectId(id) };
+      const updateDoc = {
+        $set: {
+          role: role,
+        },
+      };
+
+      const options = { upsert: true };
+      const result = await users.updateOne(filter, updateDoc, options);
+      res.send(result);
+    });
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
