@@ -64,6 +64,14 @@ async function run() {
         photoUrl,
         role: "donner",
       };
+
+      const user = await users.findOne({
+        $or: [{ phone }, { userEmail }],
+      });
+      if (user) {
+        return res.status(202).send({message:"User already exists"})
+      }
+
       const result = await users.insertOne(data);
       res.send(result);
     });
@@ -116,7 +124,7 @@ async function run() {
       // }
 
       const result = await users.updateOne(filter, updateDoc, options);
-      res.send(result)
+      res.send(result);
     });
 
     app.get("/admin/:email", async (req, res) => {
