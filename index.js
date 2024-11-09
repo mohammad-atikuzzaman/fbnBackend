@@ -95,6 +95,38 @@ async function run() {
       res.send(result);
     });
 
+    app.patch("/update-donner/:phone", async (req, res) => {
+      const { phone } = req.params; // Extract phone number from URL parameter
+      const { date } = req.body; // Extract new date from request body
+ 
+
+      // if(phone){
+      //   return console.log(date)
+      // }
+      try {
+        // Find the document by phone and update the lastDonationDate field
+        const updatedDonor = await users.findOneAndUpdate(
+          { phone: phone }, // Find by phone number
+          { $set: { lastDonationDate: date } }, // Update only the lastDonationDate field
+          { new: true } // Return the updated document
+        );
+        
+        if (!updatedDonor) {
+          return res.status(404).json({ message: "Donor not found" });
+        }
+
+        res.status(200).json({
+          message: "Donation date updated successfully",
+          user: updatedDonor,
+        });
+      } catch (error) {
+        res.status(500).json({
+          message: "Error updating donation date",
+          error: error.message,
+        });
+      }
+    });
+
     app.get("/admin/:email", async (req, res) => {
       const { email } = req.params;
       const query = { userEmail: email };
@@ -122,7 +154,6 @@ async function run() {
 
     app.post("/blood-request", async (req, res) => {
       const data = req.body;
-      console.log(data);
 
       const result = await bloodRequest.insertOne(data);
       res.send(result);
@@ -141,15 +172,23 @@ async function run() {
 
     app.delete("/delete-donation/:id", async (req, res) => {
       const { id } = req.params;
-      const query = {_id: new ObjectId(id)}
-      const result = await bloodRequest.deleteOne(query)
-      res.send(result)
+      const query = { _id: new ObjectId(id) };
+      const result = await bloodRequest.deleteOne(query);
+      res.send(result);
     });
 
-    app.get("/donated", async(req, res)=>{
-      const result = await successfully.find().toArray()
-      res.send(result)
-    })
+    app.get("/donated", async (req, res) => {
+      const result = await successfully.find().toArray();
+      res.send(result);
+    });
+
+    app.get("/patient-details/:id", async (req, res) => {
+      const { id } = req.params;
+      console.log(id);
+      const query = { _id: new ObjectId(id) };
+      const result = await successfully.findOne(query);
+      res.send(result);
+    });
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
