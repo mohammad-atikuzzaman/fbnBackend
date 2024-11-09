@@ -60,6 +60,7 @@ async function run() {
         village,
         bloodGroup,
         lastDonationDate,
+        donationCount: 0,
         photoUrl,
         role: "donner",
       };
@@ -95,36 +96,27 @@ async function run() {
       res.send(result);
     });
 
-    app.patch("/update-donner/:phone", async (req, res) => {
-      const { phone } = req.params; // Extract phone number from URL parameter
-      const { date } = req.body; // Extract new date from request body
- 
+    app.patch("/update-donor/:phone", async (req, res) => {
+      const { phone } = req.params;
+      const { date } = req.body;
 
-      // if(phone){
-      //   return console.log(date)
+      const filter = { phone: phone };
+      const options = { upsert: true };
+      const updateDoc = {
+        $set: {
+          lastDonationDate: date,
+        },
+        $inc: { donationCount: 1 },
+      };
+
+      // if (phone) {
+      //   const result = await users.findOne({ phone });
+      //   console.log(updateDoc);
+      //   return console.log(phone, date);
       // }
-      try {
-        // Find the document by phone and update the lastDonationDate field
-        const updatedDonor = await users.findOneAndUpdate(
-          { phone: phone }, // Find by phone number
-          { $set: { lastDonationDate: date } }, // Update only the lastDonationDate field
-          { new: true } // Return the updated document
-        );
-        
-        if (!updatedDonor) {
-          return res.status(404).json({ message: "Donor not found" });
-        }
 
-        res.status(200).json({
-          message: "Donation date updated successfully",
-          user: updatedDonor,
-        });
-      } catch (error) {
-        res.status(500).json({
-          message: "Error updating donation date",
-          error: error.message,
-        });
-      }
+      const result = await users.updateOne(filter, updateDoc, options);
+      res.send(result)
     });
 
     app.get("/admin/:email", async (req, res) => {
@@ -148,6 +140,8 @@ async function run() {
         photo: result?.photoUrl,
         village: result?.village,
         lastDonation: result?.lastDonationDate,
+        donationCount: result?.donationCount,
+        role: result?.role,
       };
       res.send(data);
     });
@@ -184,7 +178,6 @@ async function run() {
 
     app.get("/patient-details/:id", async (req, res) => {
       const { id } = req.params;
-      console.log(id);
       const query = { _id: new ObjectId(id) };
       const result = await successfully.findOne(query);
       res.send(result);
