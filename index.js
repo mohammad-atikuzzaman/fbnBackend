@@ -226,6 +226,15 @@ async function run() {
       const result = await users.updateOne(filter, updateDoc, options);
       res.send(result);
     });
+
+    app.get("/admins", async (req, res) => {
+      const filter = { role: "admin" };
+      const projection = { photoUrl: 1, userName: 1, role: 1, phone: 1 }; // Specify fields to include
+      const result = await users.find(filter).project(projection).toArray();
+
+      res.send(result);
+    });
+    
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
