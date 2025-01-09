@@ -7,7 +7,7 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 app.use(
   cors({
-    origin: "*",
+    origin: ["*", "https://fbn-pabna.netlify.app", "http://localhost:5173"],
     credentials: true,
   })
 );
@@ -96,11 +96,13 @@ async function run() {
           .sort({ donationCount: -1 }) // Sort by donationCount in descending order
           .limit(10) // Limit to top 10 donors
           .toArray(); // Convert cursor to array
-    
+
         res.send(topDonors);
       } catch (error) {
         console.error("Error fetching top 10 donors:", error);
-        res.status(500).send({ message: "An error occurred while fetching top donors." });
+        res
+          .status(500)
+          .send({ message: "An error occurred while fetching top donors." });
       }
     });
 
