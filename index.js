@@ -89,6 +89,21 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/top10donner", async (req, res) => {
+      try {
+        const topDonors = await users
+          .find({}, { projection: { password: 0 } }) // Exclude the password field
+          .sort({ donationCount: -1 }) // Sort by donationCount in descending order
+          .limit(10) // Limit to top 10 donors
+          .toArray(); // Convert cursor to array
+    
+        res.send(topDonors);
+      } catch (error) {
+        console.error("Error fetching top 10 donors:", error);
+        res.status(500).send({ message: "An error occurred while fetching top donors." });
+      }
+    });
+
     app.get("/villages", async (req, res) => {
       const result = await users.find().toArray();
       const villages = [...new Set(result.map((item) => item.village))];
@@ -234,7 +249,6 @@ async function run() {
 
       res.send(result);
     });
-    
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
